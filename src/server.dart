@@ -4,6 +4,8 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
 
+import "controllers/user.dart" as user;
+
 Future<void> main() async {
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
   final cascade = Cascade().add(_router);
@@ -20,6 +22,4 @@ Future<void> main() async {
 
 // Router instance to handle requests.
 final _router = shelf_router.Router()
-  ..get('/helloworld', helloWorld);
-
-Response helloWorld(Request request) => Response.ok("Hello world!");
+  ..post('/signup', user.signup);

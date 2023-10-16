@@ -5,5 +5,7 @@ environment:
   sdk: ^3.0.0
 
 dependencies:
+  bcrypt: ^1.1.3
+  mongo_dart: ^0.9.3
   shelf: ^1.4.0
   shelf_router: ^1.1.0
