@@ -24,4 +24,5 @@ Future<void> main() async {
 // Router instance to handle requests.
 final _router = shelf_router.Router()
   ..post('/signup', user.signup)
-  ..post('/login', user.login);
+  ..post('/login', user.login)
+  ..get('/profile', user.getProfile);

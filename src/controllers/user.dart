@@ -96,3 +96,26 @@ Future<Response?> login(Request request) async {
         headers: {'content-type': 'application/json'});
   }
 }
+
+Future<Response?> getProfile(Request request) async {
+  var token = request.headers['Authorization'];
+  if (token != null) {
+    token = token.split(" ")[1];
+    try {
+      final jwt = JWT.verify(token, SecretKey(jwt_secret_passphrase));
+      final user = await db.findOne(
+          "users", where.eq('username', jwt.payload['username']));
+      return Response(200,
+          body: '{"user": ${json.encode(user['res'])}}',
+          headers: {'content-type': 'application/json'});
+    } catch (e) {
+      return Response(401,
+          body: '{"message": "Unauthorized"}',
+          headers: {'content-type': 'application/json'});
+    }
+  } else {
+    return Response(401,
+        body: '{"message": "Unauthorized"}',
+        headers: {'content-type': 'application/json'});
+  }
+}
