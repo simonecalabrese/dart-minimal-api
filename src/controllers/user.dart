@@ -66,11 +66,8 @@ Future<Response?> login(Request request) async {
           headers: {'content-type': 'application/json'});
     }
     if (check['res'] != null) {
-      var user = User(
-          check['res']['name'],
-          check['res']['username'],
-          check['res']['password'],
-          int.parse(check['res']['created_at'].toString()));
+      var user = User(check['res']['name'], check['res']['username'],
+          check['res']['password'], check['res']['created_at'].toString());
       final String saved_pass = user.password ?? "";
       if (BCrypt.checkpw(body['password'], saved_pass)) {
         final jwt = JWT(

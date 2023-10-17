@@ -13,7 +13,8 @@ Future<void> main() async {
   // https://pub.dev/documentation/shelf/latest/shelf_io/serve.html
   final server = await shelf_io.serve(
     logRequests() // https://pub.dev/documentation/shelf/latest/shelf/logRequests.html
-        .addHandler(cascade.handler), // https://pub.dev/documentation/shelf/latest/shelf/MiddlewareExtensions/addHandler.html
+        .addHandler(cascade
+            .handler), // https://pub.dev/documentation/shelf/latest/shelf/MiddlewareExtensions/addHandler.html
     InternetAddress.anyIPv4, // allow external connections
     port,
   );
