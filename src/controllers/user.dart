@@ -6,7 +6,8 @@ import 'package:mongo_dart/mongo_dart.dart';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 
-import '../db.dart' as db;
+import '../modules/db.dart' as db;
+import '../modules/http.dart';
 import '../models/user.dart';
 
 final platform_url = Platform.environment['PLATFORM_URL'] ?? 'dart-minimal-api';
@@ -23,9 +24,8 @@ Future<Response?> signup(Request request) async {
     var check =
         await db.findOne("users", where.eq('username', body['username']));
     if (check['error']) {
-      return Response(500,
-          body: '{"message": "Error occurred during creating a new user"}',
-          headers: {'content-type': 'application/json'});
+      return jsonResponse(
+          500, '{"message": "Error occurred during creating a new user"}');
     }
     if (check['res'] == null) {
       final hashed_password = BCrypt.hashpw(
@@ -35,21 +35,23 @@ Future<Response?> signup(Request request) async {
       var user = User(body['name'], body['username'], hashed_password, null);
       final res = await db.insert("users", user.toJson());
       return (res['error'])
-          ? Response(500,
-              body: '{"message": "Error occurred during creating a new user"}',
-              headers: {'content-type': 'application/json'})
-          : Response(201,
-              body: '{"message": "Username created successfully"}',
-              headers: {'content-type': 'application/json'});
+          ? jsonResponse(
+              500, '{"message": "Error occurred during creating a new user"}')
+          : jsonResponse(
+              201,
+              '{"message": "Username created successfully"}',
+            );
     } else {
-      return Response(422,
-          body: '{"message": "Username already taken"}',
-          headers: {'content-type': 'application/json'});
+      return jsonResponse(
+        422,
+        '{"message": "Username already taken"}',
+      );
     }
   } else {
-    return Response(422,
-        body: '{"message": "Invalid request payload"}',
-        headers: {'content-type': 'application/json'});
+    return jsonResponse(
+      422,
+      '{"message": "Invalid request payload"}',
+    );
   }
 }
 
@@ -61,9 +63,10 @@ Future<Response?> login(Request request) async {
     var check =
         await db.findOne("users", where.eq('username', body['username']));
     if (check['error']) {
-      return Response(500,
-          body: '{"message": "Error occurred during login"}',
-          headers: {'content-type': 'application/json'});
+      return jsonResponse(
+        500,
+        '{"message": "Error occurred during login"}',
+      );
     }
     if (check['res'] != null) {
       var user = User(check['res']['name'], check['res']['username'],
@@ -76,24 +79,27 @@ Future<Response?> login(Request request) async {
         );
         // generate jwt token signing the payload with HS256 algorithm
         final token = jwt.sign(SecretKey(jwt_secret_passphrase));
-        return Response(200,
-            body:
-                '{"message": "User logged in successfully", "token": "$token", "user": ${json.encode(user)}}',
-            headers: {'content-type': 'application/json'});
+        return jsonResponse(
+          200,
+          '{"message": "User logged in successfully", "token": "$token", "user": ${json.encode(user)}}',
+        );
       } else {
-        return Response(401,
-            body: '{"message": "Password incorrect"}',
-            headers: {'content-type': 'application/json'});
+        return jsonResponse(
+          401,
+          '{"message": "Password incorrect"}',
+        );
       }
     } else {
-      return Response(400,
-          body: '{"message": "User does not exists"}',
-          headers: {'content-type': 'application/json'});
+      return jsonResponse(
+        400,
+        '{"message": "User does not exists"}',
+      );
     }
   } else {
-    return Response(422,
-        body: '{"message": "Invalid request payload"}',
-        headers: {'content-type': 'application/json'});
+    return jsonResponse(
+      422,
+      '{"message": "Invalid request payload"}',
+    );
   }
 }
 
@@ -105,17 +111,20 @@ Future<Response?> getProfile(Request request) async {
       final jwt = JWT.verify(token, SecretKey(jwt_secret_passphrase));
       final user = await db.findOne(
           "users", where.eq('username', jwt.payload['username']));
-      return Response(200,
-          body: '{"user": ${json.encode(user['res'])}}',
-          headers: {'content-type': 'application/json'});
+      return jsonResponse(
+        200,
+        '{"user": ${json.encode(user['res'])}}',
+      );
     } catch (e) {
-      return Response(401,
-          body: '{"message": "Unauthorized"}',
-          headers: {'content-type': 'application/json'});
+      return jsonResponse(
+        401,
+        '{"message": "Unauthorized"}',
+      );
     }
   } else {
-    return Response(401,
-        body: '{"message": "Unauthorized"}',
-        headers: {'content-type': 'application/json'});
+    return jsonResponse(
+      401,
+      '{"message": "Unauthorized"}',
+    );
   }
 }
