@@ -1,6 +1,6 @@
 A minimal **Dart** boilerplate HTTP api server with user authentication composed by 3 routes.
 
-The users passwords are hashed and stored inside a **MongoDB** database using the [Bcrypt](https://it.wikipedia.org/wiki/Bcrypt) algorithm and the Dart package [bcrypt](https://pub.dev/documentation/bcrypt/latest/).
+The users passwords are hashed and stored inside a **MongoDB** database using the [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt) algorithm and the Dart package [bcrypt](https://pub.dev/documentation/bcrypt/latest/).
 
 ## Get started
 
